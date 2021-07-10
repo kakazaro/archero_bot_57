@@ -56,7 +56,8 @@ class CaveEngine(QObject):
     t_boss = 'boss'
     t_final_boss = 'final_boss'
 
-    levels_type = {
+    # levels_type = {
+    default_levels_type = {
         0: t_intro,
         1: t_normal,
         2: t_heal,
@@ -78,6 +79,20 @@ class CaveEngine(QObject):
         18: t_normal,
         19: t_heal,
         20: t_final_boss,
+    }
+
+    boss_levels_type = {
+        0: t_intro,
+        1: t_boss,
+        2: t_boss,
+        3: t_boss,
+        4: t_boss,
+        5: t_boss,
+        6: t_boss,
+        7: t_boss,
+        8: t_boss,
+        9: t_boss,
+        10: t_final_boss,
     }
 
     max_loops_game = 20
@@ -105,6 +120,12 @@ class CaveEngine(QObject):
         if connectImmediately:
             self.initDeviceConnector()
         self.check_seconds = 4
+
+    def getLevelsType(self):
+        if self.currentDungeon == 14:
+            return self.boss_levels_type
+        else:
+            return self.default_levels_type
 
     def initDataFolders(self):
         self.dataFolders = readAllSizesFolders()
@@ -541,7 +562,7 @@ class CaveEngine(QObject):
             print("level out of range: %d" % self.currentLevel)
             self._exitEngine()
         while self.currentLevel <= self.MAX_LEVEL:
-            level = self.levels_type[self.currentLevel]
+            level = self.getLevelsType()[self.currentLevel]
             print("Level %d: %s" % (self.currentLevel, str(level)))
             if level == self.t_intro:
                 self.intro_lvl()
@@ -558,6 +579,7 @@ class CaveEngine(QObject):
         if self.screen_connector.checkFrame('endgame'):
             self.tap('close_end')
             self.gameWon.emit()
+            print('You won!!!')
 
     def changeCurrentLevel(self, new_lvl):
         self.currentLevel = new_lvl
@@ -595,6 +617,10 @@ class CaveEngine(QObject):
             self.start_one_game()
             self.currentLevel = 0
 
+    def press_close_end_if_ended_frame(self):
+        if self.screen_connector.checkFrame('endgame'):
+            self.tap('close_end')
+
     def start_one_game(self):
         self.start_date = datetime.now()
         self.stat_lvl_start = self.currentLevel
@@ -619,7 +645,7 @@ class CaveEngine(QObject):
         try:
             self.play_cave()
         except Exception as exc:
-            self.pressCloseEndIfEndedFrame()
+            self.press_close_end_if_ended_frame()
             if exc.args[0] == 'ended':
                 print("Game ended. Farmed a little bit...")
             elif exc.args[0] == 'unable_exit_dungeon':
@@ -631,9 +657,7 @@ class CaveEngine(QObject):
             else:
                 print("Got an unknown exception: %s" % exc)
                 self._exitEngine()
-        self.pressCloseEndIfEndedFrame()
-        self.statisctics_manager.saveOneGame(self.start_date, self.stat_lvl_start, self.currentLevel)
-
-    def pressCloseEndIfEndedFrame(self):
-        if self.screen_connector.checkFrame('endgame'):
-            self.tap('close_end')
+        print('end of play')
+        self.press_close_end_if_ended_frame()
+        print('Remake incoming...')
+        # self.statisctics_manager.saveOneGame(self.start_date, self.stat_lvl_start, self.currentLevel)

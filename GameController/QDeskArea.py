@@ -10,6 +10,7 @@ from QMyWidgets.QLevelState import QLevelState, PlayState
 from GameController.GameControllerController import GameControllerController
 from GameController.GameControllerModel import GameControllerModel
 
+
 class QDeskArea(QWidget):
     def __init__(self, parent: QWidget, controller: GameControllerController, model: GameControllerModel):
         super(QWidget, self).__init__()
@@ -29,6 +30,7 @@ class QDeskArea(QWidget):
     def initconnectors(self):
         self.model.engine.levelChanged.connect(self.levelChanged)
         self.model.engine.addLog.connect(self.logArrived)
+        self.controller.chapterChanged.connect(self.onCurrentChapterChanged)
 
     def levelChanged(self, new_level):
         for i, levelState in enumerate(self.chapersState):
@@ -59,13 +61,19 @@ class QDeskArea(QWidget):
         level_names = self.model.getLevelsNames()
         v_layouts = []
         line_elements = math.ceil(len(level_names) / self.rows)
+
+        for i in reversed(range(self.box.count())):
+            for k in reversed(range(self.box.itemAt(i).layout().count())):
+                self.box.itemAt(i).layout().itemAt(k).widget().deleteLater()
+            self.box.itemAt(i).layout().deleteLater()
+
         for i in range(line_elements):
             lay = QVBoxLayout()
             lay.setAlignment(Qt.AlignTop)
             v_layouts.append(lay)
             self.box.addLayout(lay)
         for i, v in level_names.items():
-            object = QLevelState(self.model,self.controller,i,v)
+            object = QLevelState(self.model, self.controller, i, v)
             object.setFixedSize(150, 300)
             if i == self.model.engine.currentLevel:
                 object.SetState(PlayState.Playing)
@@ -82,3 +90,10 @@ class QDeskArea(QWidget):
         self.scroll.setWidget(self.widget)
         self.scroll.setAlignment(Qt.AlignCenter)
         self.main_layout.addWidget(self.scroll)
+
+    def onCurrentChapterChanged(self, ch_number: int):
+        self.resetCurrentDungeon()
+        self.initUI()
+        # self.main_layout.update()
+        # self.main_layout.activate()
+        # print(ch_number)

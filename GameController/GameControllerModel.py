@@ -51,7 +51,7 @@ class GameControllerModel(QObject):
                          "12. Dungeon of Traps",
                          "13. Lava Land",
                          "14. Eskimo Lands"]
-        self.allowed_chapters = [3, 6, 10]
+        self.allowed_chapters = [3, 6, 10, 14]
         self.workerThread: WorkerThread = None
 
     def connected(self):
@@ -78,7 +78,7 @@ class GameControllerModel(QObject):
         pass
 
     def getLevelsNames(self):
-        return self.engine.levels_type
+        return self.engine.getLevelsType()
 
     def load_icons(self):
         icons_dts = {}

@@ -74,4 +74,4 @@ class QDungeonSelector(QWidget):
         pixmap = QtGui.QPixmap(self.model.getChapterImagePath(ch_number))
         pixmap = pixmap.scaled(self.lblCurrentDungeon.width(), self.lblCurrentDungeon.height(), Qt.KeepAspectRatio)
         self.lblCurrentDungeon.setPixmap(pixmap)
-        self.currentChapter = self.model.chapters[ch_number]
+        self.currentChapter = self.model.chapters[ch_number - 1]
