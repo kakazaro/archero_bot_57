@@ -79,6 +79,7 @@ class CaveEngine(QObject):
         19: t_heal,
         20: t_final_boss,
     }
+
     max_loops_game = 20
 
     def __init__(self, connectImmediately: bool = False):
@@ -155,6 +156,7 @@ class CaveEngine(QObject):
     def changeScreenSize(self, w, h):
         self.width, self.heigth = w, h
         print("New resolution set: %dx%d" % (self.width, self.heigth))
+        self.changeCurrentDataFolder("%dx%d" % (self.width, self.heigth))
         self.resolutionChanged.emit(w, h)
 
     def __unused__initConnection(self):
@@ -261,7 +263,7 @@ class CaveEngine(QObject):
         print("Going through dungeon (designed for #10)")
         self.log("Cross dungeon 10")
         self.disableLogs = True
-        self.swipe('n', 0.5)
+        self.swipe('n', 4)
         self.swipe('nw', 4)
         self.swipe('ne', 4)
         self.swipe('nw', 2)
@@ -348,48 +350,54 @@ class CaveEngine(QObject):
         print("Auto attacking")
         self.log("Auto attacking")
         experience_bar_line = self.screen_connector.getLineExpBar()
-        recheck = False
-        for i in range(_time, 0, -1):
-            if i % self.check_seconds == 0 or recheck:
-                recheck = False
-                print("Checking screen...")
-                self.log("screen check")
-                frame = self.screen_connector.getFrame()
-                state = self.screen_connector.getFrameState(frame)
-                if state == "unknown":
-                    print("Unknown screen situation detected. Checking again...")
-                    self.wait(2)
-                    if self.screen_connector.getFrameState() == "unknown":
-                        raise Exception('unknown_screen_state')
-                    else:
-                        recheck = True
-                        continue
-                elif state == "endgame" or state == "repeat_endgame_question":
-                    if state == "repeat_endgame_question":
-                        self.wait(5)
-                    print("Game ended")
-                    self.log("Game over")
-                    self.wait(1)
-                    print("Going back to menu...")
-                    self.tap('close_end')
-                    self.wait(8)  # Wait to go to the menu
-                    raise Exception('ended')
-                elif state == "select_ability" or state == "fortune_wheel" or state == "devil_question" or state == "mistery_vendor" or state == "ad_ask":
-                    print("Level ended. Collecting results for leveling up.")
+        try_move = 'w'
+        position = 0
+        while True:
+            print("Checking screen...")
+            self.log("screen check")
+            frame = self.screen_connector.getFrame()
+            state = self.screen_connector.getFrameState(frame)
+            if state == "unknown":
+                print("Unknown screen situation detected. Checking again...")
+                self.wait(1)
+                if self.screen_connector.getFrameState() == "unknown":
+                    raise Exception('unknown_screen_state')
+                else:
+                    continue
+            elif state == "endgame" or state == "repeat_endgame_question":
+                if state == "repeat_endgame_question":
+                    self.wait(5)
+                print("Game ended")
+                self.log("Game over")
+                self.wait(1)
+                print("Going back to menu...")
+                self.tap('close_end')
+                self.wait(5)  # Wait to go to the menu
+                raise Exception('ended')
+            elif state == "select_ability" or state == "fortune_wheel" or state == "devil_question" or state == "mistery_vendor" or state == "ad_ask":
+                print("Level ended. Collecting results for leveling up.")
+                self.wait(1)
+                return
+            elif check_exp_bar and self.screen_connector.checkExpBarHasChanged(experience_bar_line, frame):
+                print("Experience gained!")
+                self.log("Gained experience")
+                self.wait(2)
+                return
+            elif state == "in_game":
+                if self.screen_connector.checkDoorsOpen(frame):
+                    print("In game, door opened")
                     self.wait(1)
                     return
-                elif check_exp_bar and self.screen_connector.checkExpBarHasChanged(experience_bar_line, frame):
-                    print("Experience gained!")
-                    self.log("Gained experience")
-                    self.wait(3)
-                    return
-                elif state == "in_game":
-                    if self.screen_connector.checkDoorsOpen(frame):
-                        print("In game, door opened")
-                        self.wait(1)
-                        return
-                    else:
-                        print("In game. Playing but level not ended")
+                else:
+                    print("In game. Playing but level not ended")
+                    self.swipe(try_move, 0.5)
+                    position = position + 0.5
+                    if position >= 1:
+                        position = 0
+                        if try_move == 'w':
+                            try_move = 'e'
+                        else:
+                            try_move = 'w'
             self.wait(1)
 
     def _exitEngine(self):
@@ -411,31 +419,31 @@ class CaveEngine(QObject):
             print("state: %s" % state)
             if state == "select_ability":
                 self.tap('ability_left')
-                self.wait(3)
+                self.wait(1.5)
             elif state == "fortune_wheel":
                 self.tap('lucky_wheel_start')
                 self.wait(6)
             elif state == "repeat_endgame_question":
                 self.tap('spin_wheel_back')
-                self.wait(3)
+                self.wait(1.5)
             elif state == "devil_question":
                 self.tap('ability_daemon_reject')
-                self.wait(3)
+                self.wait(1.5)
             elif state == "ad_ask":
                 self.tap('spin_wheel_back')
-                self.wait(3)
+                self.wait(1.5)
             elif state == "mistery_vendor":
                 self.tap('spin_wheel_back')
-                self.wait(3)
+                self.wait(1.5)
             elif state == "special_gift_respin":
                 self.tap('spin_wheel_back')
-                self.wait(3)
+                self.wait(1.5)
             elif state == "angel_heal":
                 self.tap('heal_right' if self.healingStrategy == HealingStrategy.AlwaysHeal else 'heal_left')
-                self.wait(3)
+                self.wait(1.5)
             elif state == "on_pause":
                 self.tap('resume')
-                self.wait(3)
+                self.wait(1.5)
             elif state == "time_prize":
                 print("Collecting time prize and ending game. Unexpected behaviour but managed")
                 self.tap("collect_time_prize")
@@ -522,7 +530,7 @@ class CaveEngine(QObject):
         self.tap('ability_daemon_reject')
         self.tap('ability_left')
         self.swipe('n', 3)
-        self.wait(5)
+        self.wait(2)
         self.tap('lucky_wheel_start')
         self.wait(5)
         self.swipe('n', 2)
@@ -533,19 +541,20 @@ class CaveEngine(QObject):
             print("level out of range: %d" % self.currentLevel)
             self._exitEngine()
         while self.currentLevel <= self.MAX_LEVEL:
-            print("Level %d: %s" % (self.currentLevel, str(self.levels_type[self.currentLevel])))
-            if self.levels_type[self.currentLevel] == self.t_intro:
+            level = self.levels_type[self.currentLevel]
+            print("Level %d: %s" % (self.currentLevel, str(level)))
+            if level == self.t_intro:
                 self.intro_lvl()
-            elif self.levels_type[self.currentLevel] == self.t_normal:
+            elif level == self.t_normal:
                 self.normal_lvl()
-            elif self.levels_type[self.currentLevel] == self.t_heal:
+            elif level == self.t_heal:
                 self.heal_lvl()
-            elif self.levels_type[self.currentLevel] == self.t_final_boss:
+            elif level == self.t_final_boss:
                 self.boss_final()
-            elif self.levels_type[self.currentLevel] == self.t_boss:
+            elif level == self.t_boss:
                 self.boss_lvl()
             self.changeCurrentLevel(self.currentLevel + 1)
-        self.wait(5)
+        self.wait(2)
         if self.screen_connector.checkFrame('endgame'):
             self.tap('close_end')
             self.gameWon.emit()
@@ -557,20 +566,24 @@ class CaveEngine(QObject):
     def boss_final(self):
         self.wait(2)
         self.swipe('w', 3)
-        self.wait(50)
+        self.wait(2)
         self.reactGamePopups()
         self.tap('start')
         self.wait(2)
         self.swipe('n', 5)
         self.wait(.5)
         self.swipe('ne', 3)
-        self.wait(5)
+        self.wait(2)
         self.tap('close_end')  # this is to wxit
 
     def chooseCave(self):
         print("Main menu")
         self.tap('start')
         self.wait(3)
+        if self.screen_connector.checkFrame("btn_home_raid"):
+            print("Ignore Raid")
+            self.tap('start_ignore_raid')
+            self.wait(3)
 
     def quick_test_functions(self):
         pass

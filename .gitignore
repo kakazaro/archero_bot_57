@@ -15,6 +15,7 @@ datas/statistics.csv
 
 # All PyCharm data
 .idea/*
+apk/*
 
 # All out screens
 screens/out/*
