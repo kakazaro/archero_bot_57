@@ -390,9 +390,9 @@ class CaveEngine(QObject):
                     return
                 else:
                     print("In game. Playing but level not ended")
-                    self.swipe(try_move, 0.5)
-                    position = position + 0.5
-                    if position >= 1:
+                    self.swipe(try_move, 0.25)
+                    position = position + 0.25
+                    if position >= 1.5:
                         position = 0
                         if try_move == 'w':
                             try_move = 'e'
