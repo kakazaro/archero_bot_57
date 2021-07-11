@@ -7,6 +7,11 @@ from StatisticsManager import StatisticsManager
 from Utils import loadJsonData, saveJsonData_oneIndent, saveJsonData_twoIndent, readAllSizesFolders, buildDataFolder, \
     getCoordFilePath
 import enum
+from random import seed
+from random import random
+
+# seed random number generator
+seed(1)
 
 
 class HealingStrategy(enum.Enum):
@@ -619,8 +624,8 @@ class CaveEngine(QObject):
         self.swipe('n', 2)
 
     move_new = {
-        'w': ['nw', 'sw'],
-        'e': ['ne', 'se']
+        'w': ['nw', ['sw', 's']],
+        'e': ['ne', ['se', 's']]
     }
 
     def play_cave_new(self):
@@ -629,6 +634,7 @@ class CaveEngine(QObject):
         dir_move = 'w'
 
         while True:
+            self.swipe('n', 1)
             self.swipe(self.move_new[dir_move][0], 2)
 
             if self.screen_connector.getFrameState() != "in_game":
@@ -641,7 +647,11 @@ class CaveEngine(QObject):
                     diff = abs(px - last_position[dir_move])
                     print('diff %dpx' % diff)
                     if diff < 15:
-                        self.swipe(self.move_new[dir_move][1], 1)
+                        back_index = 0
+                        if random() > .5:
+                            back_index = 1
+
+                        self.swipe(self.move_new[dir_move][1][back_index], 1)
                         self.swipe(self.move_new[dir_move][0], 1)
                         px = None
 
