@@ -500,7 +500,7 @@ class CaveEngine(QObject):
                 self.wait(1.5)
             elif state == "fortune_wheel":
                 self.tap('lucky_wheel_start')
-                self.wait(10)
+                self.wait(7)
             elif state == "repeat_endgame_question":
                 self.tap('spin_wheel_back')
                 self.wait(1.5)
