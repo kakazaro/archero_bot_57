@@ -60,13 +60,18 @@ class QDeskArea(QWidget):
         self.chapersState = []
         level_names = self.model.getLevelsNames()
         v_layouts = []
-        line_elements = math.ceil(len(level_names) / self.rows)
 
         for i in reversed(range(self.box.count())):
             for k in reversed(range(self.box.itemAt(i).layout().count())):
                 self.box.itemAt(i).layout().itemAt(k).widget().deleteLater()
             self.box.itemAt(i).layout().deleteLater()
 
+        if len(level_names) > 11:
+            self.rows = 2
+        else:
+            self.rows = 1
+
+        line_elements = math.ceil(len(level_names) / self.rows)
         for i in range(line_elements):
             lay = QVBoxLayout()
             lay.setAlignment(Qt.AlignTop)
@@ -79,6 +84,7 @@ class QDeskArea(QWidget):
                 object.SetState(PlayState.Playing)
             self.chapersState.append(object)
             v_layouts[i % line_elements].addWidget(object)
+
             # self.box.addWidget(object)
         # self.insertMockupData()
         self.widget.setLayout(self.box)

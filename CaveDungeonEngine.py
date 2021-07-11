@@ -28,7 +28,7 @@ class CaveEngine(QObject):
     # onImageSelected = pyqtSignal()
     MAX_LEVEL = 20
 
-    playtime = 70
+    playtime = 20
     # Set this to true if you want to use generated data with TouchManager. Uses below coordinates path
     UseGeneratedData = False
     # Set this to true if keep receiving "No energy, wqiting for one minute"
@@ -95,12 +95,17 @@ class CaveEngine(QObject):
         10: t_final_boss,
     }
 
-    max_loops_game = 20
+    all_levels_type = {
+        0: t_intro,
+        1: t_normal,
+    }
+
+    max_loops_game = 1000
 
     def __init__(self, connectImmediately: bool = False):
         super(QObject, self).__init__()
         self.currentLevel = 0
-        self.currentDungeon = 6
+        self.currentDungeon = 1
         self.statisctics_manager = StatisticsManager()
         self.start_date = datetime.now()
         self.stat_lvl_start = 0
@@ -122,6 +127,8 @@ class CaveEngine(QObject):
         self.check_seconds = 4
 
     def getLevelsType(self):
+        if self.currentDungeon == 1:
+            return self.all_levels_type
         if self.currentDungeon == 14:
             return self.boss_levels_type
         else:
@@ -256,7 +263,7 @@ class CaveEngine(QObject):
         if second_check:
             if self.screen_connector.getFrameState() != "in_game":
                 self.reactGamePopups()
-                self.exit_dungeon_uncentered_new(False)
+                self.exit_dungeon_uncentered_new(True)
         self.wait(1)  # Safety wait for extra check
 
     def exit_dungeon_uncentered_old(self):
@@ -284,7 +291,7 @@ class CaveEngine(QObject):
         print("Going through dungeon (designed for #10)")
         self.log("Cross dungeon 10")
         self.disableLogs = True
-        self.swipe('n', 4)
+        self.swipe('n', 0.25)
         self.swipe('nw', 4)
         self.swipe('ne', 4)
         self.swipe('nw', 2)
@@ -338,8 +345,54 @@ class CaveEngine(QObject):
         self.swipe('n', .3)
         self.disableLogs = False
 
+    def goTroughDungeonSelf(self, moves):
+        print("Going through dungeon self")
+        for m in moves:
+            print(m)
+            self.swipe(m[0], m[1])
+
+    troughMove = {
+        3: {
+            1: [['n', 5]],
+            3: [['n', 5]],
+            6: [['n', 5]],
+            8: [['n', 5]],
+            11: [['n', 5]],
+            13: [['n', 5]],
+            16: [['n', 5]],
+            18: [['n', 5]]
+        },
+        6: {
+            1: [['n', 1], ['w', 0.25], ['n', 5]],
+            3: [['n', 5]],
+            6: [['n', 5]],
+            8: [['n', 5]],
+            11: [['n', 5]],
+            13: [['n', 5]],
+            16: [['n', 5]],
+            18: [['w', 0.25], ['n', 5]]
+        },
+        10: {
+            1: [['n', 5]],
+            3: [['n', 5]],
+            6: [['w', 0.25], ['n', 6]],
+            8: [['n', 2], ['w', 1], ['n', 3]],
+            11: [['n', 5]],
+            13: [['n', 5]],
+            16: [['n', 5]],
+            18: [['n', 5]]
+        }
+    }
+
     def goTroughDungeon(self):
-        if self.currentDungeon == 3:
+        moves = None
+        if self.troughMove[self.currentDungeon] is not None:
+            if self.troughMove[self.currentDungeon][self.currentLevel] is not None:
+                moves = self.troughMove[self.currentDungeon][self.currentLevel]
+
+        if moves is not None:
+            self.goTroughDungeonSelf(moves)
+        elif self.currentDungeon == 3:
             self.goTroughDungeon3()
         elif self.currentDungeon == 6:
             self.goTroughDungeon6()
@@ -348,7 +401,7 @@ class CaveEngine(QObject):
         else:
             self.goTroughDungeon_old()
         # Add movement if decentering is detected
-        if self.centerAfterCrossingDungeon or self.currentLevel == 18: self.centerPlayer()
+        # if self.centerAfterCrossingDungeon or self.currentLevel == 18: self.centerPlayer()
 
     def centerPlayer(self):
         px, dir = self.screen_connector.getPlayerDecentering()
@@ -373,7 +426,8 @@ class CaveEngine(QObject):
         experience_bar_line = self.screen_connector.getLineExpBar()
         try_move = 'w'
         position = 0
-        while True:
+        time_loop = _time
+        while time_loop > 0:
             print("Checking screen...")
             self.log("screen check")
             frame = self.screen_connector.getFrame()
@@ -411,7 +465,8 @@ class CaveEngine(QObject):
                     return
                 else:
                     print("In game. Playing but level not ended")
-                    self.swipe(try_move, 0.25)
+                    if not is_boss:
+                        self.swipe(try_move, 0.25)
                     position = position + 0.25
                     if position >= 1.5:
                         position = 0
@@ -420,6 +475,7 @@ class CaveEngine(QObject):
                         else:
                             try_move = 'w'
             self.wait(1)
+            time_loop = time_loop - 1
 
     def _exitEngine(self):
         self.statisctics_manager.saveOneGame(self.start_date, self.stat_lvl_start, self.currentLevel)
@@ -440,10 +496,11 @@ class CaveEngine(QObject):
             print("state: %s" % state)
             if state == "select_ability":
                 self.tap('ability_left')
+                self.tap('ability_right')
                 self.wait(1.5)
             elif state == "fortune_wheel":
                 self.tap('lucky_wheel_start')
-                self.wait(6)
+                self.wait(10)
             elif state == "repeat_endgame_question":
                 self.tap('spin_wheel_back')
                 self.wait(1.5)
@@ -471,6 +528,7 @@ class CaveEngine(QObject):
                 self.wait(3)
                 raise Exception('ended')
             elif state == "endgame":
+                self.wait(5)
                 raise Exception('ended')
             i += 1
             self.wait(.1)
@@ -521,8 +579,11 @@ class CaveEngine(QObject):
 
     def boss_lvl(self):
         self.swipe('n', 2)
-        self.swipe('w', .25)
-        self.swipe('n', 2)
+        if self.currentDungeon == 14:
+            self.swipe('w', .7)
+        else:
+            self.swipe('w', .2)
+        self.swipe('n', 5)
         self.letPlay(self.playtime, is_boss=True)
         self.reactGamePopups()
         self.exit_dungeon_uncentered()
@@ -550,11 +611,42 @@ class CaveEngine(QObject):
         self.wait(3)
         self.tap('ability_daemon_reject')
         self.tap('ability_left')
+        self.tap('ability_right')
         self.swipe('n', 3)
         self.wait(2)
         self.tap('lucky_wheel_start')
         self.wait(5)
         self.swipe('n', 2)
+
+    move_new = {
+        'w': ['nw', 'sw'],
+        'e': ['ne', 'se']
+    }
+
+    def play_cave_new(self):
+        print('play new game')
+        last_position = {'w': None, 'e': None}
+        dir_move = 'w'
+
+        while True:
+            self.swipe(self.move_new[dir_move][0], 2)
+
+            if self.screen_connector.getFrameState() != "in_game":
+                self.reactGamePopups()
+                last_position = {'w': None, 'e': None}
+            else:
+                # save player position
+                px, dir = self.screen_connector.getPlayerDecentering()
+                if last_position[dir_move] is not None:
+                    diff = abs(px - last_position[dir_move])
+                    print('diff %dpx' % diff)
+                    if diff < 15:
+                        self.swipe(self.move_new[dir_move][1], 1)
+                        self.swipe(self.move_new[dir_move][0], 1)
+                        px = None
+
+                last_position[dir_move] = px
+                dir_move = 'e' if dir_move == 'w' else 'w'
 
     def play_cave(self):
         self.levelChanged.emit(self.currentLevel)
@@ -567,14 +659,21 @@ class CaveEngine(QObject):
             if level == self.t_intro:
                 self.intro_lvl()
             elif level == self.t_normal:
-                self.normal_lvl()
+                if self.currentDungeon == 1:
+                    self.play_cave_new()
+                else:
+                    self.normal_lvl()
             elif level == self.t_heal:
                 self.heal_lvl()
             elif level == self.t_final_boss:
                 self.boss_final()
+                break
             elif level == self.t_boss:
                 self.boss_lvl()
-            self.changeCurrentLevel(self.currentLevel + 1)
+            if self.currentLevel == self.MAX_LEVEL:
+                break
+            else:
+                self.changeCurrentLevel(self.currentLevel + 1)
         self.wait(2)
         if self.screen_connector.checkFrame('endgame'):
             self.tap('close_end')
@@ -660,4 +759,4 @@ class CaveEngine(QObject):
         print('end of play')
         self.press_close_end_if_ended_frame()
         print('Remake incoming...')
-        # self.statisctics_manager.saveOneGame(self.start_date, self.stat_lvl_start, self.currentLevel)
+        self.statisctics_manager.saveOneGame(self.start_date, self.stat_lvl_start, self.currentLevel)

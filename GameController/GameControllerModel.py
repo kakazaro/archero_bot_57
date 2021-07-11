@@ -37,7 +37,7 @@ class GameControllerModel(QObject):
         self.icon_path = "icons"
         self.icons_dataset = self.load_icons()
         self.currentEngineState: EngineState = EngineState.Ready
-        self.chapters = ["1. Verdant Prairie",
+        self.chapters = ["1. All",
                          "2. Storm Desert",
                          "3. Abandoned Dungeon",
                          "4. Crystal Mines",
@@ -50,8 +50,10 @@ class GameControllerModel(QObject):
                          "11. The Capital",
                          "12. Dungeon of Traps",
                          "13. Lava Land",
-                         "14. Eskimo Lands"]
-        self.allowed_chapters = [3, 6, 10, 14]
+                         "14. Eskimo Lands",
+                         "15. Pharaoh's Chamber",
+                         "16. Archaic Temple"]
+        self.allowed_chapters = [1, 3, 6, 10, 14, 16]
         self.workerThread: WorkerThread = None
 
     def connected(self):
