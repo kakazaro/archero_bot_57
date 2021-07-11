@@ -651,7 +651,7 @@ class CaveEngine(QObject):
                         if random() > .5:
                             back_index = 1
 
-                        self.swipe(self.move_new[dir_move][1][back_index], 1)
+                        self.swipe(self.move_new[dir_move][1][back_index], (0.5 + random()))
                         self.swipe(self.move_new[dir_move][0], 1)
                         px = None
 
