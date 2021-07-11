@@ -634,8 +634,8 @@ class CaveEngine(QObject):
         dir_move = 'w'
 
         while True:
-            self.swipe('n', 1)
-            self.swipe(self.move_new[dir_move][0], 2)
+            self.swipe('n', 0.2 + random())
+            self.swipe(self.move_new[dir_move][0], 1 + random())
 
             if self.screen_connector.getFrameState() != "in_game":
                 self.reactGamePopups()
