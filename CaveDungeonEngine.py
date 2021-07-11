@@ -533,7 +533,7 @@ class CaveEngine(QObject):
                 self.wait(3)
                 raise Exception('ended')
             elif state == "endgame":
-                self.wait(5)
+                self.wait(10)
                 raise Exception('ended')
             i += 1
             self.wait(.1)
