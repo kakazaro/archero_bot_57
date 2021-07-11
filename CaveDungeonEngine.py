@@ -524,7 +524,7 @@ class CaveEngine(QObject):
                 self.wait(1.5)
             elif state == "time_prize":
                 print("Collecting time prize and ending game. Unexpected behaviour but managed")
-                self.tap("collect_time_prize")
+                self.tap("close_time_reward")
                 self.wait(3)
                 raise Exception('ended')
             elif state == "endgame":
@@ -729,8 +729,8 @@ class CaveEngine(QObject):
         print("New game. Starting from level %d" % self.currentLevel)
         self.wait(4)
         if self.screen_connector.checkFrame("time_prize"):
-            print("Collecting time prize")
-            self.tap("resume")
+            print("ignore time prize")
+            self.tap("close_time_reward")
             self.wait(3)
         if self.currentLevel == 0:
             if self.UseManualStart:
