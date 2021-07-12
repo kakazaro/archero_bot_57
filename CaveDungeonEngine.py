@@ -769,5 +769,5 @@ class CaveEngine(QObject):
                 self._exitEngine()
         print('end of play')
         self.press_close_end_if_ended_frame()
-        print('Remake incoming...')
+        print('Remake incoming......')
         self.statisctics_manager.saveOneGame(self.start_date, self.stat_lvl_start, self.currentLevel)
