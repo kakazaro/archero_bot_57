@@ -284,7 +284,7 @@ state = off
 
 function main()
 menu = gg.choice({
-  '1 - ⚡ Hack energy (Max 500)',
+  '1 - ⚡ Hack energy (Max 50)',
   '2 - 💀 GodMode  (InGame)',
   '3 - 📥 Drop 1 Equipment Type',
   '4 - 📥 Drop 1 Type of Scroll',
@@ -634,7 +634,7 @@ function eng()
             table.insert(newValues, {
                 address=value.address,
                 flags=gg.TYPE_DWORD,
-                value='500',
+                value='50',
                 freeze=true,
             })
         end
