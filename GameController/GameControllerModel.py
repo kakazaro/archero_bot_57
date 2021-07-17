@@ -37,23 +37,8 @@ class GameControllerModel(QObject):
         self.icon_path = "icons"
         self.icons_dataset = self.load_icons()
         self.currentEngineState: EngineState = EngineState.Ready
-        self.chapters = ["1. All",
-                         "2. Storm Desert",
-                         "3. Abandoned Dungeon",
-                         "4. Crystal Mines",
-                         "5. Lost Castle",
-                         "6. Cave of Bones",
-                         "7. Barens of Shadow",
-                         "8. Silent Expanse",
-                         "9. Frozen Pinnacle",
-                         "10. Land of Doom",
-                         "11. The Capital",
-                         "12. Dungeon of Traps",
-                         "13. Lava Land",
-                         "14. Eskimo Lands",
-                         "15. Pharaoh's Chamber",
-                         "16. Archaic Temple"]
-        self.allowed_chapters = [1, 3, 6, 10, 14, 16]
+        self.chapters = ["1. Forever run", "2. One time run"]
+        self.allowed_chapters = [1, 2]
         self.workerThread: WorkerThread = None
 
     def connected(self):
@@ -84,10 +69,7 @@ class GameControllerModel(QObject):
 
     def load_icons(self):
         icons_dts = {}
-        icons_dts['prev'] = "Start.png"
         icons_dts['play'] = "Play.png"
-        icons_dts['pause'] = "Pause.png"
-        icons_dts['next'] = "End.png"
         icons_dts['stop'] = "Stop.png"
         return icons_dts
 
@@ -115,7 +97,7 @@ class GameControllerModel(QObject):
             self.stopDungeon()
         self.workerThread = WorkerThread()
         self.setEngineState(EngineState.Playing)
-        self.workerThread.function = self.engine.start_infinite_play
+        self.workerThread.function = self.engine.start_play
         self.workerThread.start()
 
     def waitForEngineEnd(self):
@@ -135,19 +117,9 @@ class GameControllerModel(QObject):
         except Exception as e:
             print("Trying to kill process resulted in: %s" % str(e))
 
-    def pauseDungeon(self):
-        if self.workerThread is not None:
-            try:
-                self.setEngineState(EngineState.StopInvoked)
-                new_thread = WorkerThread()
-                new_thread.function = self._stopEngineUnsafe
-                new_thread.start()
-            except Exception as e:
-                print("Trying to kill process resulted in: %s" % str(e))
-
     def stopDungeon(self):
-        self.pauseDungeon()
         self.engine.changeCurrentLevel(0)
+        self.engine.setStopRequested()
 
     def changeChapterToPlay(self, new_chapter):
         self.engine.changeChapter(new_chapter)

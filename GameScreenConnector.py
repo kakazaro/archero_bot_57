@@ -254,8 +254,8 @@ class GameScreenConnector:
         center_diff = int((self.width / 2) - center_px)
         return center_diff
 
-    def getPlayerDecentering(self) -> (int, str):
-        line = self.getLineHpBar()
+    def getPlayerDecentering(self, frame=None) -> (int, str):
+        line = self.getLineHpBar(frame)
         line = self.filterLineByColor(line)
         line_filtered = self.filterRawHpLine_window(line)
         # center_diff = self.getPlayerDecenteringByStartStop(line_filtered)
@@ -264,8 +264,13 @@ class GameScreenConnector:
             dir = "center"
         else:
             dir = "right" if center_diff < 0 else "left"
+
+        if (self.width / 2.0 - abs(center_diff)) < self.width / 10.0:
+            corner = True
+        else:
+            corner = False
         print("Character on the %s side by %dpx" % (dir, abs(center_diff)))
-        return center_diff, dir
+        return center_diff, dir, corner
 
     def getLineHpBar(self, frame=None):
         """

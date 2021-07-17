@@ -62,8 +62,8 @@ class QDungeonSelector(QWidget):
         dialog = QInputDialog()
         dialog.setStyleSheet("")
         dialog.setComboBoxItems(chapters)
-        dialog.setWindowTitle("Select chapter")
-        dialog.setLabelText("Chapter:")
+        dialog.setWindowTitle("Play style")
+        dialog.setLabelText("Style:")
         ret = dialog.exec()
         if ret:
             new_ch = self.getChapterNumber(dialog.textValue())

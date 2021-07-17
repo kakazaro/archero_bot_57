@@ -72,7 +72,7 @@ class UsbConnector(object):
             return True
         self._changeConnectedState(False)
         self.checkingConnectionChange(True)
-        ports = [5037, 62001]
+        ports = [5037, 62001, 62025]
         ok = False
         os.system("adb disconnect")
         dev = 'device'

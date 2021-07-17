@@ -31,7 +31,6 @@ class CaveEngine(QObject):
     # onDictionaryTapsChanged = pyqtSignal(dict)
     # onButtonLocationChanged = pyqtSignal(str)
     # onImageSelected = pyqtSignal()
-    MAX_LEVEL = 20
 
     playtime = 20
     # Set this to true if you want to use generated data with TouchManager. Uses below coordinates path
@@ -57,48 +56,6 @@ class CaveEngine(QObject):
 
     t_intro = 'intro'
     t_normal = 'normal'
-    t_heal = 'heal'
-    t_boss = 'boss'
-    t_final_boss = 'final_boss'
-
-    # levels_type = {
-    default_levels_type = {
-        0: t_intro,
-        1: t_normal,
-        2: t_heal,
-        3: t_normal,
-        4: t_heal,
-        5: t_boss,
-        6: t_normal,
-        7: t_heal,
-        8: t_normal,
-        9: t_heal,
-        10: t_boss,
-        11: t_normal,
-        12: t_heal,
-        13: t_normal,
-        14: t_heal,
-        15: t_boss,
-        16: t_normal,
-        17: t_heal,
-        18: t_normal,
-        19: t_heal,
-        20: t_final_boss,
-    }
-
-    boss_levels_type = {
-        0: t_intro,
-        1: t_boss,
-        2: t_boss,
-        3: t_boss,
-        4: t_boss,
-        5: t_boss,
-        6: t_boss,
-        7: t_boss,
-        8: t_boss,
-        9: t_boss,
-        10: t_final_boss,
-    }
 
     all_levels_type = {
         0: t_intro,
@@ -132,12 +89,7 @@ class CaveEngine(QObject):
         self.check_seconds = 4
 
     def getLevelsType(self):
-        if self.currentDungeon == 1:
-            return self.all_levels_type
-        if self.currentDungeon == 14:
-            return self.boss_levels_type
-        else:
-            return self.default_levels_type
+        return self.all_levels_type
 
     def initDataFolders(self):
         self.dataFolders = readAllSizesFolders()
@@ -245,169 +197,6 @@ class CaveEngine(QObject):
             exit()
         time.sleep(decimal)
 
-    def exit_dungeon_uncentered(self):
-        if self.currentDungeon == 3:
-            self.exit_dungeon_uncentered_new()
-        else:
-            self.exit_dungeon_uncentered_new()
-
-    def exit_dungeon_uncentered_new(self, second_check=True):
-        # Center
-        px, dir = self.screen_connector.getPlayerDecentering()
-        self.wait(0.5)
-        if dir == 'left':
-            self.swipe('w', .7)
-            self.swipe('ne', 4)
-        elif dir == 'right':
-            self.swipe('e', .7)
-            self.swipe('nw', 4)
-        elif dir == "center":
-            self.swipe('n', 2)
-        else:
-            self.swipe('n', 2)
-        if second_check:
-            if self.screen_connector.getFrameState() != "in_game":
-                self.reactGamePopups()
-                self.exit_dungeon_uncentered_new(True)
-        self.wait(1)  # Safety wait for extra check
-
-    def exit_dungeon_uncentered_old(self):
-        self.wait(2)
-        upper_line = self.screen_connector.getHorLine("hor_up_line")
-        print("Going trough door to exit...")
-        self.wait(1)
-        self.swipe('n', 2)
-        self.wait(2)
-        if not self.screen_connector.checkUpperLineHasChanged(upper_line):
-            print("Not exiting, trying right...")
-            self.wait(1)
-            self.swipe('ne', 3)
-            self.wait(2)
-            if not self.screen_connector.checkUpperLineHasChanged(upper_line):
-                print("Not exiting, trying left...")
-                self.wait(1)
-                self.swipe('nw', 4)
-                self.wait(2)
-                if not self.screen_connector.checkUpperLineHasChanged(upper_line):
-                    raise Exception('unable_exit_dungeon')
-        self.log("Exit level")
-
-    def goTroughDungeon10(self):
-        print("Going through dungeon (designed for #10)")
-        self.log("Cross dungeon 10")
-        self.disableLogs = True
-        self.swipe('n', 0.25)
-        self.swipe('nw', 4)
-        self.swipe('ne', 4)
-        self.swipe('nw', 2)
-        self.swipe('e', .20)
-        self.disableLogs = False
-
-    def goTroughDungeon_old(self):
-        print("Going through dungeon old design 'S')")
-        self.log("Cross dungeon (old)")
-        self.disableLogs = True
-        self.swipe('n', 1.5)
-        self.swipe('w', .32)
-        self.swipe('n', .5)
-        self.swipe('e', .32)
-        self.swipe('e', .32)
-        self.swipe('n', .5)
-        self.swipe('w', .325)
-        self.swipe('n', 1.5)
-        self.disableLogs = False
-
-    def goTroughDungeon6(self):
-        print("Going through dungeon (designed for #6)")
-        self.log("Cross dungeon 6")
-        self.disableLogs = True
-        self.swipe('n', 1.5)
-        self.swipe('w', .32)
-        self.swipe('n', .5)
-        self.swipe('e', .32)
-        self.swipe('e', .32)
-        self.swipe('n', .7)
-        self.swipe('w', .325)
-        self.swipe('w', .3)
-        self.swipe('n', 1.6)
-        self.swipe('e', .28)
-        self.swipe('n', 2.5)
-        self.disableLogs = False
-
-    def goTroughDungeon3(self):
-        print("Going through dungeon (designed for #3)")
-        self.log("Cross dungeon 3")
-        self.disableLogs = True
-        self.swipe('n', 1.5)
-        self.swipe('w', .25)
-        self.swipe('n', .5)
-        self.swipe('e', .25)
-        self.swipe('n', 2)
-        # And now we need to go around possible obstacle
-        self.swipe('w', 1)
-        self.swipe('n', .5)
-        self.swipe('e', 1)
-        self.swipe('n', .3)
-        self.disableLogs = False
-
-    def goTroughDungeonSelf(self, moves):
-        print("Going through dungeon self")
-        for m in moves:
-            print(m)
-            self.swipe(m[0], m[1])
-
-    troughMove = {
-        3: {
-            1: [['n', 5]],
-            3: [['n', 5]],
-            6: [['n', 5]],
-            8: [['n', 5]],
-            11: [['n', 5]],
-            13: [['n', 5]],
-            16: [['n', 5]],
-            18: [['n', 5]]
-        },
-        6: {
-            1: [['n', 1], ['w', 0.25], ['n', 5]],
-            3: [['n', 5]],
-            6: [['n', 5]],
-            8: [['n', 5]],
-            11: [['n', 5]],
-            13: [['n', 5]],
-            16: [['n', 5]],
-            18: [['w', 0.25], ['n', 5]]
-        },
-        10: {
-            1: [['n', 5]],
-            3: [['n', 5]],
-            6: [['w', 0.25], ['n', 6]],
-            8: [['n', 2], ['w', 1], ['n', 3]],
-            11: [['n', 5]],
-            13: [['n', 5]],
-            16: [['n', 5]],
-            18: [['n', 5]]
-        }
-    }
-
-    def goTroughDungeon(self):
-        moves = None
-        if self.troughMove[self.currentDungeon] is not None:
-            if self.troughMove[self.currentDungeon][self.currentLevel] is not None:
-                moves = self.troughMove[self.currentDungeon][self.currentLevel]
-
-        if moves is not None:
-            self.goTroughDungeonSelf(moves)
-        elif self.currentDungeon == 3:
-            self.goTroughDungeon3()
-        elif self.currentDungeon == 6:
-            self.goTroughDungeon6()
-        elif self.currentDungeon == 10:
-            self.goTroughDungeon10()
-        else:
-            self.goTroughDungeon_old()
-        # Add movement if decentering is detected
-        # if self.centerAfterCrossingDungeon or self.currentLevel == 18: self.centerPlayer()
-
     def centerPlayer(self):
         px, dir = self.screen_connector.getPlayerDecentering()
         # Move in oppositye direction. Speed is made by y = mx + q
@@ -423,72 +212,15 @@ class CaveEngine(QObject):
         elif dir == "center":
             pass
 
-    def letPlay(self, _time: int, is_boss=False):
-        check_exp_bar = not is_boss
-        self.wait(2)
-        print("Auto attacking")
-        self.log("Auto attacking")
-        experience_bar_line = self.screen_connector.getLineExpBar()
-        try_move = 'w'
-        position = 0
-        time_loop = _time
-        while time_loop > 0:
-            print("Checking screen...")
-            self.log("screen check")
-            frame = self.screen_connector.getFrame()
-            state = self.screen_connector.getFrameState(frame)
-            if state == "unknown":
-                print("Unknown screen situation detected. Checking again...")
-                self.wait(1)
-                if self.screen_connector.getFrameState() == "unknown":
-                    raise Exception('unknown_screen_state')
-                else:
-                    continue
-            elif state == "endgame" or state == "repeat_endgame_question":
-                if state == "repeat_endgame_question":
-                    self.wait(5)
-                print("Game ended")
-                self.log("Game over")
-                self.wait(1)
-                print("Going back to menu...")
-                self.tap('close_end')
-                self.wait(5)  # Wait to go to the menu
-                raise Exception('ended')
-            elif state == "select_ability" or state == "fortune_wheel" or state == "devil_question" or state == "mistery_vendor" or state == "ad_ask":
-                print("Level ended. Collecting results for leveling up.")
-                self.wait(1)
-                return
-            elif check_exp_bar and self.screen_connector.checkExpBarHasChanged(experience_bar_line, frame):
-                print("Experience gained!")
-                self.log("Gained experience")
-                self.wait(2)
-                return
-            elif state == "in_game":
-                if self.screen_connector.checkDoorsOpen(frame):
-                    print("In game, door opened")
-                    self.wait(1)
-                    return
-                else:
-                    print("In game. Playing but level not ended")
-                    if not is_boss:
-                        self.swipe(try_move, 0.25)
-                    position = position + 0.25
-                    if position >= 1.5:
-                        position = 0
-                        if try_move == 'w':
-                            try_move = 'e'
-                        else:
-                            try_move = 'w'
-            self.wait(1)
-            time_loop = time_loop - 1
-
     def _exitEngine(self):
         self.statisctics_manager.saveOneGame(self.start_date, self.stat_lvl_start, self.currentLevel)
         exit(1)
 
-    def reactGamePopups(self) -> int:
+    def reactGamePopups(self, frame=None) -> int:
+        last_state = frame
         state = ""
         i = 0
+        reacted = False
         while state != "in_game":
             if self.stopRequested:
                 exit()
@@ -497,7 +229,8 @@ class CaveEngine(QObject):
                 self.log("Max loops reached")
                 self._exitEngine()
             self.log("screen check")
-            state = self.screen_connector.getFrameState()
+            state = self.screen_connector.getFrameState(last_state)
+            last_state = None
             print("state: %s" % state)
             if state == "select_ability":
                 self.tap('ability_left')
@@ -537,87 +270,24 @@ class CaveEngine(QObject):
                 self.tap('close_end')
                 raise Exception('ended')
             i += 1
+            if state != "in_game":
+                reacted = True
             self.wait(.1)
-        return i
-
-    def normal_lvl(self):
-        self.goTroughDungeon()
-        self.letPlay(self.playtime)
-        self.reactGamePopups()
-        self.exit_dungeon_uncentered()
-
-    def normal_lvl_manual(self):
-        self.goTroughDungeon()
-        self.letPlay(self.playtime)
-        self.tap('spin_wheel_back')  # guard not to click on mistery vendor
-        self.wait(1)
-        self.tap('ability_left')
-        self.wait(1)
-        self.tap('spin_wheel_back')  # guard not to click on watch
-        self.wait(3)
-        self.tap('ability_left')
-        self.wait(2)
-        self.tap('spin_wheel_back')  # guard not to click on watch or buy stuff (armor or others)
-        self.wait(1)
-        self.exit_dungeon_uncentered()
-
-    def heal_lvl(self):
-        self.swipe('n', 1.7)
-        self.reactGamePopups()
-        self.swipe('n', .8)
-        self.reactGamePopups()
-        self.swipe('n', 1)
-        # self.exit_dungeon_uncentered()
-
-    def heal_lvl_manual(self):
-        self.swipe('n', 1.7)
-        self.wait(1)
-        self.tap('ability_daemon_reject')
-        self.tap('ability_right')
-        self.wait(1.5)
-        self.tap('spin_wheel_back')
-        self.wait(1)
-        self.swipe('n', .8)
-        self.wait(1.5)
-        self.tap('spin_wheel_back')
-        self.wait(1.5)
-        self.exit_dungeon_uncentered()
-
-    def boss_lvl(self):
-        self.swipe('n', 2)
-        if self.currentDungeon == 14:
-            self.swipe('w', .7)
-        else:
-            self.swipe('w', .2)
-        self.swipe('n', 5)
-        self.letPlay(self.playtime, is_boss=True)
-        self.reactGamePopups()
-        self.exit_dungeon_uncentered()
-
-    def boss_lvl_manual(self):
-        self.swipe('n', 2)
-        self.swipe('n', 1.2)
-        if self.currentLevel != 15:
-            self.swipe('n', 1)
-        self.letPlay(self.playtime, is_boss=True)
-        self.tap('lucky_wheel_start')
-        self.wait(6)
-        self.tap('spin_wheel_back')
-        self.wait(1.5)
-        self.tap('ability_daemon_reject')
-        self.tap('ability_left')
-        self.wait(1.5)
-        self.tap('spin_wheel_back')  # guard not to click on watch
-        self.wait(1.5)
-        self.tap('ability_left')  # Extra guard for level up
-        self.wait(1.5)
-        self.exit_dungeon_uncentered()
+        return reacted
 
     def intro_lvl(self):
         self.wait(3)
         self.tap('ability_daemon_reject')
         self.tap('ability_left')
         self.tap('ability_right')
+        if self.screen_connector.checkFrame("gg_bottom"):
+            print('Hack God Mode')
+            self.tap("click_gg_button")
+            self.wait(1)
+            self.tap("hack_godmode")
+            self.wait(5)
+        else:
+            print('Not found Game Guardian')
         self.swipe('n', 3)
         self.wait(2)
         self.tap('lucky_wheel_start')
@@ -629,7 +299,7 @@ class CaveEngine(QObject):
         'e': ['ne', ['se', 's']]
     }
 
-    def play_cave_new(self):
+    def play_forever(self):
         print('play new game')
         last_position = {'w': None, 'e': None}
         dir_move = 'w'
@@ -638,22 +308,25 @@ class CaveEngine(QObject):
             self.swipe('n', 0.2 + random())
             self.swipe(self.move_new[dir_move][0], 1 + random())
 
-            if self.screen_connector.getFrameState() != "in_game":
-                self.reactGamePopups()
+            frame = self.screen_connector.getFrame()
+            if self.reactGamePopups(frame):
                 last_position = {'w': None, 'e': None}
             else:
                 # save player position
-                px, dir = self.screen_connector.getPlayerDecentering()
+                px, dir, corner = self.screen_connector.getPlayerDecentering(frame)
                 if last_position[dir_move] is not None:
                     diff = abs(px - last_position[dir_move])
                     print('diff %dpx' % diff)
-                    if diff < 15:
-                        back_index = 0
+                    if diff <= 15:
+                        back_dir = 'w' if random() > .5 else 'e'
                         if random() > .5:
-                            back_index = 1
+                            # try back with dir
+                            self.swipe('s' + back_dir, (0.5 + random()))
+                        else:
+                            # try back to south
+                            self.swipe('s', (0.5 + random()))
 
-                        self.swipe(self.move_new[dir_move][1][back_index], (0.5 + random()))
-                        self.swipe(self.move_new[dir_move][0], 1 + random())
+                        self.swipe('n' + back_dir, (1 + random()))
                         px = None
 
                 last_position[dir_move] = px
@@ -661,30 +334,15 @@ class CaveEngine(QObject):
 
     def play_cave(self):
         self.levelChanged.emit(self.currentLevel)
-        if self.currentLevel < 0 or self.currentLevel > 20:
-            print("level out of range: %d" % self.currentLevel)
-            self._exitEngine()
-        while self.currentLevel <= self.MAX_LEVEL:
+        while True:
             level = self.getLevelsType()[self.currentLevel]
             print("Level %d: %s" % (self.currentLevel, str(level)))
             if level == self.t_intro:
                 self.intro_lvl()
             elif level == self.t_normal:
-                if self.currentDungeon == 1:
-                    self.play_cave_new()
-                else:
-                    self.normal_lvl()
-            elif level == self.t_heal:
-                self.heal_lvl()
-            elif level == self.t_final_boss:
-                self.boss_final()
+                self.play_forever()
                 break
-            elif level == self.t_boss:
-                self.boss_lvl()
-            if self.currentLevel == self.MAX_LEVEL:
-                break
-            else:
-                self.changeCurrentLevel(self.currentLevel + 1)
+            self.changeCurrentLevel(self.currentLevel + 1)
         self.wait(2)
         if self.screen_connector.checkFrame('endgame'):
             self.tap('close_end')
@@ -695,19 +353,6 @@ class CaveEngine(QObject):
         self.currentLevel = new_lvl
         self.levelChanged.emit(self.currentLevel)
 
-    def boss_final(self):
-        self.wait(2)
-        self.swipe('w', 3)
-        self.wait(2)
-        self.reactGamePopups()
-        self.tap('start')
-        self.wait(2)
-        self.swipe('n', 5)
-        self.wait(.5)
-        self.swipe('ne', 3)
-        self.wait(2)
-        self.tap('close_end')  # this is to wxit
-
     def chooseCave(self):
         print("Main menu")
         self.tap('start')
@@ -717,15 +362,13 @@ class CaveEngine(QObject):
             self.tap('start_ignore_raid')
             self.wait(3)
 
-    def quick_test_functions(self):
-        pass
-
-    def start_infinite_play(self):
-        # Only for test purposes on pressing play
-        # self.quick_test_functions()
+    def start_play(self):
         while True:
             self.start_one_game()
             self.currentLevel = 0
+            if self.currentDungeon != 1:
+                break
+            print('Remake incoming......')
 
     def press_close_end_if_ended_frame(self):
         if self.screen_connector.checkFrame('endgame'):
@@ -769,5 +412,4 @@ class CaveEngine(QObject):
                 self._exitEngine()
         print('end of play')
         self.press_close_end_if_ended_frame()
-        print('Remake incoming......')
         self.statisctics_manager.saveOneGame(self.start_date, self.stat_lvl_start, self.currentLevel)
