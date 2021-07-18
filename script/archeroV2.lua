@@ -290,7 +290,7 @@ menu = gg.choice({
   '4 - 📥 Drop 1 Type of Scroll',
   '5 - 🐣 Hatch more eggs (InGame)',
   '6 - ☯️ Swap Skills(InGame)',
-  '❌ Exit'}, nil, 'Archero🎯 v3.0.x' + '\n')
+  '❌ Exit'}, nil, 'Archero🎯 v3.0.x' .. '\n')
 
 if menu == 1 then eng() end
 if menu == 2 then god() end
@@ -305,7 +305,7 @@ function eggs()
     menuegg = gg.choice({
                 '🥔 Boss Eggs🐲',
                 '🥚 Commons Eggs🐸',
-                '↩ Back'}, nil, 'ℹSelect an egg type to hatch🐣' + '\n')
+                '↩ Back'}, nil, 'ℹSelect an egg type to hatch🐣' .. '\n')
 
     if menuegg == 1 then eggc() end
     if menuegg == 2 then eggb() end
