@@ -290,7 +290,7 @@ menu = gg.choice({
   '4 - 📥 Drop 1 Type of Scroll',
   '5 - 🐣 Hatch more eggs (InGame)',
   '6 - ☯️ Swap Skills(InGame)',
-  '❌ Exit'}, nil,'Archero🎯 v3.0.x\n')
+  '❌ Exit'}, nil, 'Archero🎯 v3.0.x' + '\n')
 
 if menu == 1 then eng() end
 if menu == 2 then god() end
@@ -302,22 +302,22 @@ if menu == 7 then os.exit() end
 end
 
 function eggs()
-menuegg = gg.choice({
-'🥔 Boss Eggs🐲',
-'🥚 Commons Eggs🐸',
-'↩ Back'}, nil,'ℹSelect an egg type to hatch🐣\n')
+    menuegg = gg.choice({
+                '🥔 Boss Eggs🐲',
+                '🥚 Commons Eggs🐸',
+                '↩ Back'}, nil, 'ℹSelect an egg type to hatch🐣' + '\n')
 
-if menuegg == 1 then eggc() end
-if menuegg == 2 then eggb() end
-if menuegg == 3 then main() end
+    if menuegg == 1 then eggc() end
+    if menuegg == 2 then eggb() end
+    if menuegg == 3 then main() end
 end
 
 function skin()
-local itemType = gg.choice(
-        {'1️⃣ Hero Skin 🛐','2️⃣ Specials Abilities ♒','3️⃣Arrow Abilities ♈', '4️⃣ Circle Abilities ♋', '5️⃣ Spirit Abilities ☯️','6️⃣ Explosive Abilities 🌋', '7️⃣ Attack Boost Abilities ♐', '8️⃣ Health Dependent Abilities ♥️','9️⃣ Other Abilities ✡','🔟 Not available yet Abilities ☮'},
-        nil,
-        'ℹ Choose the Skill Type 🔀\n'
-    )
+    local itemType = gg.choice(
+            {'1️⃣ Hero Skin 🛐','2️⃣ Specials Abilities ♒','3️⃣Arrow Abilities ♈', '4️⃣ Circle Abilities ♋', '5️⃣ Spirit Abilities ☯️','6️⃣ Explosive Abilities 🌋', '7️⃣ Attack Boost Abilities ♐', '8️⃣ Health Dependent Abilities ♥️','9️⃣ Other Abilities ✡','🔟 Not available yet Abilities ☮'},
+            nil,
+            'ℹ Choose the Skill Type 🔀\n'
+        )
     if itemType == nil then
         return
     end
@@ -330,142 +330,131 @@ local itemType = gg.choice(
         return
     end
 
-t = gg.getListItems()
-gg.loadResults(t)
+    t = gg.getListItems()
+    gg.loadResults(t)
 
-gg.refineNumber('1000001~1000200', gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1)
-revert = gg.getResults(30, nil, nil, nil, nil, nil, nil, nil, nil)
-gg.editAll(itemsSpec6[itemType][item].id, gg.TYPE_DWORD)
+    gg.refineNumber('1000001~1000200', gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1)
+    revert = gg.getResults(30, nil, nil, nil, nil, nil, nil, nil, nil)
+    gg.editAll(itemsSpec6[itemType][item].id, gg.TYPE_DWORD)
 
-if gg.getResultsCount() >1 then 
-gg.toast("ℹSkill Selected Success♋...")
-gg.clearResults()
+    if gg.getResultsCount() >1 then
+        gg.toast("ℹSkill Selected Success♋...")
+        gg.clearResults()
+    else
+        if gg.getResultsCount() <1 then
+            gg.setRanges(gg.REGION_ANONYMOUS)
+            gg.searchNumber('1000001~1000200;1Q;3;0~2Q::77',
+            gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 20)
+            gg.refineNumber('1000001~7000007', gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1)
+            revert = gg.getResults(30, nil, nil, nil, nil, nil, nil, nil, nil)
 
-else
+            if gg.getResultsCount() <1 then
+                gg.clearResults()
+                gg.alert('⚠️Error!... Unable to activate this Hack, please try again or restart the game')
+            else
+                local t = gg.getResults(30, nil, nil, nil, nil, nil, nil, nil, nil)
+                for i, v in ipairs(t) do
+                    local resultNumber = gg.getResultsCount()
+                    if resultNumber % 1 == 0 then
+                        local results = gg.getResults(30)
+                        local newValues = {}
+                        for index, result in ipairs(results) do
+                            if index % 1 == 0 then
+                                result.value = itemsSpec6[itemType][item].id
+                                table.insert(newValues, result)
+                            end
+                        end
+                        gg.setValues(newValues)
 
-if gg.getResultsCount() <1 then
+                        local t = gg.getResults(9, nil, nil, nil, nil, nil, nil, nil, nil)
+                        gg.addListItems(t)
+                        t = nil
 
-    gg.setRanges(gg.REGION_ANONYMOUS)
-    gg.searchNumber('1000001~1000200;1Q;3;0~2Q::77',
-    gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 20)
-  
-gg.refineNumber('1000001~7000007', gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1)
-revert = gg.getResults(30, nil, nil, nil, nil, nil, nil, nil, nil)
-
-if gg.getResultsCount() <1 then
-gg.clearResults()
-gg.alert('⚠️Error!... Unable to activate this Hack, please try again or restart the game')
-
-else
-
-local t = gg.getResults(30, nil, nil, nil, nil, nil, nil, nil, nil)
-
-for i, v in ipairs(t) do
-    local resultNumber = gg.getResultsCount()
-    if resultNumber % 1 == 0 then
-        local results = gg.getResults(30)
-        local newValues = {}
-        for index, result in ipairs(results) do
-            if index % 1 == 0 then
-                result.value = itemsSpec6[itemType][item].id
-                table.insert(newValues, result)
+                        gg.toast("ℹSkill Selected Success♋...")
+                    end
+                    gg.clearResults()
+                end
             end
-            
         end
-        gg.setValues(newValues)
-
-local t = gg.getResults(9, nil, nil, nil, nil, nil, nil, nil, nil)
-gg.addListItems(t)
-t = nil
-
-gg.toast("ℹSkill Selected Success♋...")
     end
-gg.clearResults()
-end
-end
-end
-end
 end
 
 function eggc()
-gg.clearResults()
-local item = gg.choice(
-        map(itemsSpec4, function(item) return item.name end),
-        nil,
-       'ℹ Which Boss Egg you want to Add to Hatch🐣\n\n⚠️Note: Remember that each Boss Egg has a Max limit at a time'
-      )
+    gg.clearResults()
+    local item = gg.choice(
+            map(itemsSpec4, function(item) return item.name end),
+            nil,
+           'ℹ Which Boss Egg you want to Add to Hatch🐣\n\n⚠️Note: Remember that each Boss Egg has a Max limit at a time'
+          )
     if item == nil then
         return
     end
 
-local config = loadConfig()
-local x = gg.prompt(
-    {string.format('ℹHow many Boss Eggs you want to add to hatch🐣 [3; 19]')},
-    config.ovo or {},
-    {'number'}
-)
+    local config = loadConfig()
+    local x = gg.prompt(
+        {string.format('ℹHow many Boss Eggs you want to add to hatch🐣 [3; 19]')},
+        config.ovo or {},
+        {'number'}
+    )
 
-if x == nil then 
-return 
-end
+    if x == nil then
+        return
+    end
 
     config.ovo = values
     saveConfig(config)
-gg.setRanges(gg.REGION_ANONYMOUS)
-gg.searchNumber(itemsSpec4[item].id .. ';-1;' .. itemsSpec4[item].id .. ';1~5' .. '::13', gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 1)
---gg.refineNumber("2001~2008;1~5::13", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1)
-revert = gg.getResults(4, nil, nil, nil, nil, nil, nil, nil, nil)
+    gg.setRanges(gg.REGION_ANONYMOUS)
+    gg.searchNumber(itemsSpec4[item].id .. ';-1;' .. itemsSpec4[item].id .. ';1~5' .. '::13', gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 1)
+    --gg.refineNumber("2001~2008;1~5::13", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1)
+    revert = gg.getResults(4, nil, nil, nil, nil, nil, nil, nil, nil)
 
-if gg.getResultsCount() <1 then
-gg.clearResults()
-gg.alert("⚠️Ops Looks like something went wrong🤭❗❗❗❗❗❗\n\nℹThis Hack couldn't be activated at the moment😏\n\nℹReasons...\n---You haven't defeated any specific Boss yet to multiply the shock🐣\n\n🆘️Once you kill at least 1 activate it again, Remember that the limit of each one is detailed when selecting the Boss, If you go beyond this limit it won't work🚫")
-
-else
-
-gg.editAll(itemsSpec4[item].id .. ';-1;' .. itemsSpec4[item].id .. ';' .. x[1], gg.TYPE_DWORD)
-gg.toast('ℹSelected Boss Egg Add to Hatch🐣... Success♨️')
-gg.clearResults()end
+    if gg.getResultsCount() <1 then
+        gg.clearResults()
+        gg.alert("⚠️Ops Looks like something went wrong🤭❗❗❗❗❗❗\n\nℹThis Hack couldn't be activated at the moment😏\n\nℹReasons...\n---You haven't defeated any specific Boss yet to multiply the shock🐣\n\n🆘️Once you kill at least 1 activate it again, Remember that the limit of each one is detailed when selecting the Boss, If you go beyond this limit it won't work🚫")
+    else
+        gg.editAll(itemsSpec4[item].id .. ';-1;' .. itemsSpec4[item].id .. ';' .. x[1], gg.TYPE_DWORD)
+        gg.toast('ℹSelected Boss Egg Add to Hatch🐣... Success♨️')
+        gg.clearResults()
+    end
 end
 
 function eggb()
-gg.clearResults()
-local item = gg.choice(
-        map(itemsSpec5, function(item) return item.name end),
-        nil,
-'ℹ Which Common Creature Egg you want to Add to Hatch🐣\n\n⚠️Note: Remember that each Common Creature egg has a Max limit at a time'
-     )
+    gg.clearResults()
+    local item = gg.choice(
+            map(itemsSpec5, function(item) return item.name end),
+            nil,
+            'ℹ Which Common Creature Egg you want to Add to Hatch🐣\n\n⚠️Note: Remember that each Common Creature egg has a Max limit at a time'
+            )
     if item == nil then
         return
     end
 
-local config = loadConfig()
-local x = gg.prompt(
-  {string.format('How many common creature eggs you want to add to hatch🐣 [30; 120]')},
-    config.ovos or {},
-    {'number'}  
-)
+    local config = loadConfig()
+    local x = gg.prompt(
+      {string.format('How many common creature eggs you want to add to hatch🐣 [30; 120]')},
+        config.ovos or {},
+        {'number'}
+    )
 
-if x == nil then 
-return 
-end
+    if x == nil then
+        return
+    end
 
     config.ovos = values
     saveConfig(config)
-gg.setRanges(gg.REGION_ANONYMOUS)
-gg.searchNumber(itemsSpec5[item].id .. ';-1;' .. itemsSpec5[item].id .. ';1~50' .. '::13', gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 1)
---gg.refineNumber("1001~1031;1~50::5", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1)
-revert = gg.getResults(4, nil, nil, nil, nil, nil, nil, nil, nil)
+    gg.setRanges(gg.REGION_ANONYMOUS)
+    gg.searchNumber(itemsSpec5[item].id .. ';-1;' .. itemsSpec5[item].id .. ';1~50' .. '::13', gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 1)
+    --gg.refineNumber("1001~1031;1~50::5", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1)
+    revert = gg.getResults(4, nil, nil, nil, nil, nil, nil, nil, nil)
 
-if gg.getResultsCount() <1 then
-gg.clearResults()
-gg.alert("⚠️Ops Looks like something went wrong🤭❗❗❗❗❗❗\n\nℹThis Hack couldn't be activated at the moment😏\n\nℹReasons...\n---You haven't defeated any specific Creature yet to multiply the shock🐣\n\n🆘️Once you kill at least 1 activate it again, Remember that the limit of each one is detailed when selecting the Creature, If you go beyond this limit it won't work🚫")
-
-else
-
-gg.editAll(itemsSpec5[item].id .. ';-1;' .. itemsSpec5[item].id .. ';' .. x[1], gg.TYPE_DWORD)
-gg.toast('ℹSelected Creature Egg Add to Hatch🐣... Success♨️')
-gg.clearResults()
-end
+    if gg.getResultsCount() <1 then
+        gg.clearResults()
+        gg.alert("⚠️Ops Looks like something went wrong🤭❗❗❗❗❗❗\n\nℹThis Hack couldn't be activated at the moment😏\n\nℹReasons...\n---You haven't defeated any specific Creature yet to multiply the shock🐣\n\n🆘️Once you kill at least 1 activate it again, Remember that the limit of each one is detailed when selecting the Creature, If you go beyond this limit it won't work🚫")
+    else
+        gg.editAll(itemsSpec5[item].id .. ';-1;' .. itemsSpec5[item].id .. ';' .. x[1], gg.TYPE_DWORD)
+        gg.toast('ℹSelected Creature Egg Add to Hatch🐣... Success♨️')
+        gg.clearResults()
+    end
 end
 
 function ofic() 
@@ -477,6 +466,7 @@ function ofic()
     if itemType == nil then
         return
     end
+
     local item = gg.choice(
         map(itemsSpec3[itemType], function(item) return item.name end),
         nil,
@@ -485,129 +475,128 @@ function ofic()
     if item == nil then
         return
     end
-gg.clearResults()
+
+    gg.clearResults()
     gg.setRanges(gg.REGION_ANONYMOUS)
     gg.searchNumber(
         '3' .. ';' .. '1010101~1070601' .. ';' .. '1' .. ';' .. '1' .. ';' .. '50~400' .. '::17',
         gg.TYPE_DWORD, false, gg.SIGN_EQUAL
     )
-gg.refineNumber("1010101~1070401", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1)
-revert = gg.getResults(300, nil, nil, nil, nil, nil, nil, nil, nil)
-local t = gg.getResults(300, nil, nil, nil, nil, nil, nil, nil, nil)
-for i, v in ipairs(t) do
-    local resultNumber = gg.getResultsCount()
-    if resultNumber % 1 == 0 then
-        local results = gg.getResults(300)
-        local newValues = {}
-        for index, result in ipairs(results) do
-            if index % 1 == 0 then
-                result.value = itemsSpec3[itemType][item].id
-                table.insert(newValues, result)
-            end
-            
-        end
-        gg.setValues(newValues)
+    gg.refineNumber("1010101~1070401", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1)
+    revert = gg.getResults(300, nil, nil, nil, nil, nil, nil, nil, nil)
+    local t = gg.getResults(300, nil, nil, nil, nil, nil, nil, nil, nil)
 
-gg.toast("Success Drop Ativado")
+    for i, v in ipairs(t) do
+        local resultNumber = gg.getResultsCount()
+        if resultNumber % 1 == 0 then
+            local results = gg.getResults(300)
+            local newValues = {}
+            for index, result in ipairs(results) do
+                if index % 1 == 0 then
+                    result.value = itemsSpec3[itemType][item].id
+                    table.insert(newValues, result)
+               end
+            end
+            gg.setValues(newValues)
+            gg.toast("Success Drop Ativado")
+        end
+        gg.clearResults()
     end
-gg.clearResults()
-end
 end
 
 function disabl()
--- Disable Hack 2 
-gg.clearResults()
-gg.setRanges(gg.REGION_ANONYMOUS)
-gg.searchNumber("3;1010101~1070401;1;1;50~400::17", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1)
-if revert ~= nil then gg.setValues(revert) end
+    -- Disable Hack 2
+    gg.clearResults()
+    gg.setRanges(gg.REGION_ANONYMOUS)
+    gg.searchNumber("3;1010101~1070401;1;1;50~400::17", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1)
+    if revert ~= nil then gg.setValues(revert) end
 
-gg.clearResults()
-gg.toast('Drop Reset Sucess')
+    gg.clearResults()
+    gg.toast('Drop Reset Sucess')
 end
 
 function god() 
---gg.clearList()
-gg.clearResults()
-gg.setRanges(gg.REGION_ANONYMOUS)
---gg.searchNumber('1;0;1;0;1;0.5::21', gg.TYPE_FLOAT, false, gg.SIGN_EQUAL, 0, -1, 5) -- search some values
---gg.refineNumber("0.5", gg.TYPE_FLOAT, false, gg.SIGN_EQUAL, 0, -1, 0)
+    --gg.clearList()
+    gg.clearResults()
+    gg.setRanges(gg.REGION_ANONYMOUS)
+    --gg.searchNumber('1;0;1;0;1;0.5::21', gg.TYPE_FLOAT, false, gg.SIGN_EQUAL, 0, -1, 5) -- search some values
+    --gg.refineNumber("0.5", gg.TYPE_FLOAT, false, gg.SIGN_EQUAL, 0, -1, 0)
 
-t = gg.getListItems()
-gg.loadResults(t)
+    t = gg.getListItems()
+    gg.loadResults(t)
 
-local t = gg.getResults(100, nil, nil, nil, nil, nil, nil, nil, nil)
-for i, v in ipairs(t) do
-	if v.flags == gg.TYPE_DWORD then
-		v.freeze = true
-end
-end
-gg.clearResults()
+    local t = gg.getResults(100, nil, nil, nil, nil, nil, nil, nil, nil)
+    for i, v in ipairs(t) do
+        if v.flags == gg.TYPE_DWORD then
+            v.freeze = true
+        end
+    end
+    gg.clearResults()
 
-gg.searchNumber("h000000000000803F000000000000803F000000000000803F0000003F", gg.TYPE_BYTE, false, gg.SIGN_EQUAL, 0, -1, 28)
-gg.refineNumber("0;0;0;63::4", gg.TYPE_BYTE, false, gg.SIGN_EQUAL, 0, -1, 28)
-revert = gg.getResults(200, nil, nil, nil, nil, nil, nil, nil, nil)
+    gg.searchNumber("h000000000000803F000000000000803F000000000000803F0000003F", gg.TYPE_BYTE, false, gg.SIGN_EQUAL, 0, -1, 28)
+    gg.refineNumber("0;0;0;63::4", gg.TYPE_BYTE, false, gg.SIGN_EQUAL, 0, -1, 28)
+    revert = gg.getResults(200, nil, nil, nil, nil, nil, nil, nil, nil)
 
-r = gg.getResults(10)
+    r = gg.getResults(10)
 
-if gg.getResultsCount() <1 then
-gg.alert('⚠️Error!... Unable to activate this Hack, please try again or restart the game')
-else
+    if gg.getResultsCount() <1 then
+        gg.alert('⚠️Error!... Unable to activate this Hack, please try again or restart the game')
+    else
+        gg.editAll("-16;35;116;73", gg.TYPE_BYTE)
+        gg.refineNumber("-16", gg.TYPE_BYTE, false, gg.SIGN_EQUAL, 0, -1, 28)
 
-gg.editAll("-16;35;116;73", gg.TYPE_BYTE)
-gg.refineNumber("-16", gg.TYPE_BYTE, false, gg.SIGN_EQUAL, 0, -1, 28)
+        local t = {}
+        t[1] = {}
+        t[1].address = r[1].address - 44
+        t[1].flags = gg.TYPE_DWORD
+        t[1].value = 1
+        gg.setValues(t)
+        --gg.addListItems(t)
 
-local t = {}
-t[1] = {}
-t[1].address = r[1].address - 44
-t[1].flags = gg.TYPE_DWORD
-t[1].value = 1
-gg.setValues(t)
---gg.addListItems(t)
+        gg.refineNumber("-16", gg.TYPE_BYTE, false, gg.SIGN_EQUAL, 0, -1, 0)
+        r = gg.getResults(10)
 
-gg.refineNumber("-16", gg.TYPE_BYTE, false, gg.SIGN_EQUAL, 0, -1, 0)
-r = gg.getResults(10)
+        t[1] = {}
+        t[1].address = r[1].address - 40
+        t[1].flags = gg.TYPE_FLOAT
+        t[1].value = 999999
+        gg.setValues(t)
+        --gg.addListItems(t)
 
-t[1] = {}
-t[1].address = r[1].address - 40
-t[1].flags = gg.TYPE_FLOAT
-t[1].value = 999999
-gg.setValues(t)
---gg.addListItems(t)
+        gg.refineNumber("-16", gg.TYPE_BYTE, false, gg.SIGN_EQUAL, 0, -1, 0)
+        r = gg.getResults(10)
 
-gg.refineNumber("-16", gg.TYPE_BYTE, false, gg.SIGN_EQUAL, 0, -1, 0)
-r = gg.getResults(10)
+        t[1] = {}
+        t[1].address = r[1].address -36
+        t[1].flags = gg.TYPE_FLOAT
+        t[1].value = 1
+        gg.setValues(t)
+        --gg.addListItems(t)
 
-t[1] = {}
-t[1].address = r[1].address -36
-t[1].flags = gg.TYPE_FLOAT
-t[1].value = 1
-gg.setValues(t)
---gg.addListItems(t)
+        gg.refineNumber("-16", gg.TYPE_BYTE, false, gg.SIGN_EQUAL, 0, -1, 0)
+        r = gg.getResults(10)
 
-gg.refineNumber("-16", gg.TYPE_BYTE, false, gg.SIGN_EQUAL, 0, -1, 0)
-r = gg.getResults(10)
+        t[1] = {}
+        t[1].address = r[1].address -336
+        t[1].flags = gg.TYPE_DWORD
+        t[1].value = 1
+        gg.setValues(t)
+        --gg.addListItems(t)
 
-t[1] = {}
-t[1].address = r[1].address -336
-t[1].flags = gg.TYPE_DWORD
-t[1].value = 1
-gg.setValues(t)
---gg.addListItems(t)
+        gg.refineNumber("-16", gg.TYPE_BYTE, false, gg.SIGN_EQUAL, 0, -1, 0)
+        r = gg.getResults(10)
 
-gg.refineNumber("-16", gg.TYPE_BYTE, false, gg.SIGN_EQUAL, 0, -1, 0)
-r = gg.getResults(10)
+        t[1] = {}
+        t[1].address = r[1].address -188
+        t[1].flags = gg.TYPE_DWORD
+        t[1].value = 0
+        t[1].freeze = true
+        gg.setValues(t)
+        gg.addListItems(t)
 
-t[1] = {}
-t[1].address = r[1].address -188
-t[1].flags = gg.TYPE_DWORD
-t[1].value = 0
-t[1].freeze = true
-gg.setValues(t)
-gg.addListItems(t)
-
-gg.clearResults()
-gg.toast('💀 GodMode Sucess!')
-end
+        gg.clearResults()
+        gg.toast('💀 GodMode Sucess!')
+    end
 end
 
 function eng()
@@ -645,31 +634,31 @@ function eng()
 end
 
 function dropitem()
-local item = gg.choice(
-        map(itemsSpec2, function(item) return item.name end),
-        nil,
-       'ℹ Which Scroll do you want to drop?  📥'
-     )
+    local item = gg.choice(
+            map(itemsSpec2, function(item) return item.name end),
+            nil,
+           'ℹ Which Scroll do you want to drop?  📥'
+         )
     if item == nil then
         return
     end
-gg.clearResults()
-gg.setRanges(gg.REGION_ANONYMOUS)
-gg.searchNumber("30101~30107;1;1;1;1;1::117", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 1)
-gg.refineNumber("30101~30107", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1)
-revert = gg.getResults(10, nil, nil, nil, nil, nil, nil, nil, nil)
+    gg.clearResults()
+    gg.setRanges(gg.REGION_ANONYMOUS)
+    gg.searchNumber("30101~30107;1;1;1;1;1::117", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 1)
+    gg.refineNumber("30101~30107", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1)
+    revert = gg.getResults(10, nil, nil, nil, nil, nil, nil, nil, nil)
 
-if gg.getResultsCount() <1 then
-gg.clearResults()
-gg.alert('⚠️Error!... Unable to activate this Hack, please try again or restart the game')
-else
+    if gg.getResultsCount() <1 then
+        gg.clearResults()
+        gg.alert('⚠️Error!... Unable to activate this Hack, please try again or restart the game')
+    else
 
-gg.editAll(itemsSpec2[item].id, gg.TYPE_DWORD)
-gg.toast('The selected Scroll will always Drop now')
-gg.clearResults()
-gg.toast ('✅Drop Success!...📜')
+    gg.editAll(itemsSpec2[item].id, gg.TYPE_DWORD)
+    gg.toast('The selected Scroll will always Drop now')
+    gg.clearResults()
+    gg.toast ('✅Drop Success!...📜')
 
-end
+    end
 end
 
 function loadConfig()
