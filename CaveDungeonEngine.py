@@ -31,8 +31,8 @@ class CaveEngine(QObject):
     # onDictionaryTapsChanged = pyqtSignal(dict)
     # onButtonLocationChanged = pyqtSignal(str)
     # onImageSelected = pyqtSignal()
+    MAX_LEVEL = 1
 
-    playtime = 20
     # Set this to true if you want to use generated data with TouchManager. Uses below coordinates path
     UseGeneratedData = False
     # Set this to true if keep receiving "No energy, wqiting for one minute"
