@@ -285,7 +285,7 @@ class CaveEngine(QObject):
             self.tap("click_gg_button")
             self.wait(1)
             self.tap("hack_godmode")
-            self.wait(5)
+            self.wait(10)
         else:
             print('Not found Game Guardian')
         self.swipe('n', 3)
