@@ -375,6 +375,7 @@ class CaveEngine(QObject):
             self.tap('close_end')
 
     def start_one_game(self):
+        start_time = time.time()
         self.start_date = datetime.now()
         self.stat_lvl_start = self.currentLevel
         self.stopRequested = False
@@ -410,6 +411,6 @@ class CaveEngine(QObject):
             else:
                 print("Got an unknown exception: %s" % exc)
                 self._exitEngine()
-        print('end of play')
+        print('end of play after %f minutes' % (round((time.time() - start_time) * 10 / 60) / 10))
         self.press_close_end_if_ended_frame()
         self.statisctics_manager.saveOneGame(self.start_date, self.stat_lvl_start, self.currentLevel)
